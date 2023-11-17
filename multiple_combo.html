@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+    <style>
+        input {
+            outline: none;
+            border: none;
+        }
+
+        .task,
+        .list {
+            width: 30%;
+            background-color: white;
+            padding: 0.3rem;
+        }
+
+        .list {
+            box-shadow: 0 30px 60px rgb(0, 0, 0, 0.2);
+            display: none;
+            overflow: auto;
+            max-height: 300px;
+        }
+
+        .tags-input {
+            display: inline-block;
+            position: relative;
+            border: 1px 0px 1px 1px;
+            border-color: #ccc;
+            border-radius: 4px;
+            padding: 5px;
+            box-shadow: 2px 2px 5px #00000033;
+            width: 30%;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .tags-input ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+
+        }
+
+        .tags-input li {
+            display: inline-block;
+            background-color: #f2f2f2;
+            color: #333;
+            border-radius: 20px;
+            padding: 5px 10px;
+            margin-right: 5px;
+            margin-bottom: 5px;
+        }
+
+
+
+        .tags-input input[type="text"] {
+            border: none;
+            outline: none;
+            padding: 5px;
+            font-size: 14px;
+            width: auto;
+        }
+
+        .tags-input input[type="text"]:focus {
+            outline: none;
+        }
+
+        .tags-input .delete-button {
+            background-color: transparent;
+            border: none;
+            color: #999;
+            cursor: pointer;
+            margin-left: 5px;
+        }
+
+        #input-tag {
+            width: 60%;
+        }
+
+        .task {
+            display: block;
+            padding-left: 0;
+            width: 30%;
+        }
+
+        .task input[type="checkbox"] {
+
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 3px;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .task input[type="checkbox"]:checked:after {
+            content: '\2713';
+            font-size: 1.2em;
+            position: absolute;
+            top: -3px;
+            left: 3px;
+            color: blue;
+        }
+
+        .task:hover {
+            background-color: aliceblue;
+            width: 100%;
+        }
+
+        .show {
+            display: block;
+        }
+
+        .down-arrow {
+            font-size: 20px;
+            background-color: white;
+            display: inline-block;
+            margin-left: -27px;
+            padding: 4px;
+        }
+        span{
+            margin-top: 5px;
+        }
+
+        .cont {
+            display: flex;
+            flex-direction: row;
+        }
+    </style>
+</head>
+
+<body>
+
+    <body>
+        <div class="cont">
+            <div class="tags-input">
+                <div class="tag">
+                    <ul id="tags"></ul>
+                </div>
+                <div class="tag">
+                    <input type="text" id="input-tag" onkeydown="searchAndCreateTag(event)">
+                </div>
+            </div>
+
+
+            <div class="drop" style="cursor: pointer;">
+                <span class="down-arrow" style="cursor: pointer;"><iconify-icon icon="uil:angle-down"></iconify-icon></span>
+            </div>
+        </div>
+
+
+
+        <div class="list">
+            <label for="task1" class="task">
+                <input type="checkbox" id="task1">Bhanu</label>
+            <label for="task2" class="task">
+                <input type="checkbox" id="task2">Ashwini</label>
+            <label for="task3" class="task">
+                <input type="checkbox" id="task3">Roopa</label>
+            <label for="task4" class="task">
+                <input type="checkbox" id="task4">Soumya</label>
+            <label for="task8" class="task">
+                <input type="checkbox" id="task8">Ritik</label>
+            <label for="task5" class="task">
+                <input type="checkbox" id="task5">Ganesh</label>
+            <label for="task6" class="task">
+                <input type="checkbox" id="task6">Mukhil</label>
+            <label for="task7" class="task">
+                <input type="checkbox" id="task7">Anubhav</label>
+            <label for="task9" class="task">
+                <input type="checkbox" id="task9">Manas</label>
+            <label for="task10" class="task">
+                <input type="checkbox" id="task10">Mani</label>
+            <hr>
+            <button type="button" onclick="add()">Add</button>
+            <button type="button" onclick="deleteOption()">Delete</button>
+        </div>
+
+
+        <script>
+
+            document.querySelector('.tags-input').addEventListener('click', () => {
+                document.querySelector('.list').classList.toggle('show');
+                input.focus();
+
+            });
+            document.querySelector('.down-arrow').addEventListener('click', () => {
+                document.querySelector('.list').classList.toggle('show');
+                input.focus();
+
+            });
+
+
+
+            const tags = document.getElementById('tags');
+            const input = document.getElementById('input-tag');
+            const createdTags = new Set();
+
+
+            const selectedBoxes = document.querySelectorAll('.task')
+            console.log(selectedBoxes)
+
+            //const options = Array.from(document.querySelectorAll('.task')).map(task => task.textContent.trim());
+            //localStorage.setItem('options', JSON.stringify(options));
+
+            //console.log(options)
+
+
+            function searchAndCreateTag(event) {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    const tagContent = input.value.trim();
+                    if (createdTags.has(tagContent)) {
+                        input.value = '';
+                        return;
+                    }
+
+                    selectedBoxes.forEach(newTask => {
+                        const newTaskContent = newTask.textContent;
+                        if (newTaskContent.includes(tagContent) && tagContent) {
+                            createTag(tagContent);
+                            input.value = '';
+                            const checkboxId = newTask.querySelector('input[type="checkbox"]').id;
+                            const relatedCheckbox = document.getElementById(checkboxId);
+                            relatedCheckbox.checked = true;
+                            createdTags.add(tagContent);
+                        }
+                    });
+                }
+            }
+
+            function createTag(tagContent) {
+                const tag = document.createElement('li');
+                tag.innerText = tagContent;
+                tag.innerHTML += '<button class="delete-button" onclick="removeTag(this)">X</button>';
+                tags.appendChild(tag);
+                input.focus()
+
+            }
+
+
+            function createTagFromOption(selectedCheckbox) {
+                const tagContent = selectedCheckbox.parentElement.textContent.trim();
+
+                if (!createdTags.has(tagContent)) {
+                    createTag(tagContent)
+                    createdTags.add(tagContent);
+                }
+
+            }
+
+            function removeTagFromOption(unselectedCheckbox) {
+                const tagContent = unselectedCheckbox.parentElement.textContent.trim();
+                if (createdTags.has(tagContent)) {
+                    createdTags.delete(tagContent)
+                    const tagsList = document.getElementById('tags');
+                    const tagToDelete = Array.from(tagsList.getElementsByTagName('li')).find(tag => tag.innerText.slice(0, -1) == tagContent);
+                    if (tagToDelete) {
+                        tagToDelete.remove();
+                    }
+                }
+
+
+            }
+
+            document.querySelectorAll('.task input[type="checkbox"]').forEach(checkbox => {
+                checkbox.addEventListener('change', function () {
+                    if (this.checked) {
+                        createTagFromOption(this);
+                    }
+                    else {
+                        removeTagFromOption(this);
+                    }
+                });
+            });
+
+
+            function removeTag(tagElement) {
+                const tagName = tagElement.parentElement.textContent.trim();
+                const uncheckTag = tagName.slice(0, -1);
+                createdTags.delete(uncheckTag);
+                tagElement.parentElement.remove();
+
+                selectedBoxes.forEach(item => {
+                    const checkboxId = item.querySelector('input[type="checkbox"]').id;
+                    const relatedCheckbox = document.getElementById(checkboxId);
+
+                    if (item.textContent.includes(uncheckTag)) {
+                        relatedCheckbox.checked = false;
+                    }
+                });
+            }
+
+
+            function searchFunc() {
+                const searchText = input.value.toLowerCase();
+                const tasks = document.querySelectorAll('.task');
+
+                tasks.forEach(task => {
+                    const taskName = task.textContent.toLowerCase();
+                    if (taskName.includes(searchText)) {
+                        task.style.display = 'block';
+                    } else {
+                        task.style.display = 'none';
+                    }
+                });
+            }
+
+            input.addEventListener('input', searchFunc);
+
+            function add() {
+                console.log(Array.from(createdTags.values()))
+            }
+            function deleteOption() {
+                const selectedCheckboxes = document.querySelectorAll('.task input[type="checkbox"]:checked');
+
+                selectedCheckboxes.forEach(checkbox => {
+                    const taskToDelete = checkbox.parentElement;
+                    const taskContent = taskToDelete.textContent.trim();
+
+                    createdTags.delete(taskContent);
+
+                    const tagsList = document.getElementById('tags');
+                    const tagToDelete = Array.from(tagsList.getElementsByTagName('li')).find(tag => tag.innerText.slice(0, -1) == taskContent);
+                    if (tagToDelete) {
+                        tagToDelete.remove();
+                    }
+
+                    taskToDelete.remove();
+                });
+                console.log(createdTags)
+            }
+
+
+
+
+        </script>
+    </body>
+
+</html>
